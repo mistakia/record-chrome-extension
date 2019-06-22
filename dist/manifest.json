@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "record",
+  "version": "0.0.1",
+  "description": "An extension for record.",
+  "icons": {
+    "128": "assets/img/icon-128.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [{
+    "matches": [
+      "https://*/*",
+      "http://*/*"
+    ],
+    "exclude_matches": [],
+    "css": [
+      "content.css"
+    ],
+    "js": [
+      "content.js"
+    ]
+  }],
+  "minimum_chrome_version": "29",
+  "permissions": [
+    "storage",
+    "cookies",
+    "tabs",
+    "http://*/",
+    "https://*/"
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "short_name": "record"
+}
