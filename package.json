@@ -23,7 +23,7 @@
     "grunt-contrib-stylus": "^1.2.0",
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
-    "semver": "2.2.1",
+    "semver": "4.3.2",
     "standard": "^12.0.1"
   },
   "engines": {
