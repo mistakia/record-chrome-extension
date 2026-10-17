@@ -77,13 +77,23 @@ const drop_all = (reason) => {
   for (const import_id of [...pending.keys()]) settle(import_id, { lost: reason })
 }
 
+// Why the last socket failed to open, for the import record.
+export let last_open_failure = null
+
 // Opens the shared socket, or resolves false when the node will not take one.
 const open_events = async ({ node_url, token }) => {
   if (socket?.readyState === WebSocket.OPEN) return true
   opening ??= new Promise((resolve) => {
     const protocols = token ? ['record', `bearer.${token}`] : ['record']
-    const candidate = new WebSocket(events_url(node_url), protocols)
-    const timer = setTimeout(() => { candidate.close(); resolve(false) }, OPEN_TIMEOUT_MS)
+    let candidate
+    try {
+      candidate = new WebSocket(events_url(node_url), protocols)
+    } catch (error) {
+      last_open_failure = String(error?.message ?? error)
+      resolve(false)
+      return
+    }
+    const timer = setTimeout(() => { last_open_failure = 'timed out'; candidate.close(); resolve(false) }, OPEN_TIMEOUT_MS)
     candidate.onopen = () => {
       clearTimeout(timer)
       socket = candidate
@@ -91,8 +101,9 @@ const open_events = async ({ node_url, token }) => {
       keepalive = setInterval(() => { if (socket?.readyState === WebSocket.OPEN) socket.send('keepalive') }, KEEPALIVE_MS)
       resolve(true)
     }
-    candidate.onclose = () => {
+    candidate.onclose = (event) => {
       clearTimeout(timer)
+      if (socket !== candidate) last_open_failure ??= `closed with code ${event?.code ?? 'unknown'}`
       if (socket === candidate) {
         socket = null
         clearInterval(keepalive)
@@ -112,6 +123,7 @@ const open_events = async ({ node_url, token }) => {
 // when the POST did not start an import. A node that takes no socket gives
 // a null handle, and the import goes unreported.
 export const prepare_watch = async (settings) => {
+  last_open_failure = null
   if (!(await open_events(settings))) return null
   holds += 1
   let released = false

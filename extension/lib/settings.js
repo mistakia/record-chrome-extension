@@ -42,7 +42,7 @@ export const is_cleartext_remote = (node_url) => {
   return protocol === 'http:' && !['127.0.0.1', 'localhost', '[::1]'].includes(hostname)
 }
 
-const DEFAULTS = { node_url: DEFAULT_NODE_URL, token: '', library_address: '', last_status: null }
+const DEFAULTS = { node_url: DEFAULT_NODE_URL, token: '', library_address: '', last_status: null, last_import: null }
 
 export const load_settings = async () => ({ ...DEFAULTS, ...(await chrome.storage.local.get(Object.keys(DEFAULTS))) })
 
@@ -50,5 +50,14 @@ export const save_settings = async (changes) => { await chrome.storage.local.set
 
 // A 401 clears the token (§9.6), never the rest of the settings.
 export const clear_token = async () => { await chrome.storage.local.set({ token: '' }) }
+
+// The last import's progress, so a result the worker never reported (a
+// socket that never opened, a worker Chrome stopped mid-wait) is visible.
+// Only the page's host is kept, never a full URL (§9.7.7).
+export const record_import = async (fields) => {
+  const { last_import } = await chrome.storage.local.get('last_import')
+  const same = last_import !== null && last_import !== undefined && (fields.import_id === undefined || last_import.import_id === fields.import_id)
+  await chrome.storage.local.set({ last_import: { ...(same ? last_import : {}), ...fields, updated_at: new Date().toISOString() } })
+}
 
 export const record_status = async (status) => { await chrome.storage.local.set({ last_status: { ...status, at: new Date().toISOString() } }) }

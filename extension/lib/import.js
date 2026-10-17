@@ -2,9 +2,9 @@
 // settings, POST the URL, clear the token on a 401, record the connection
 // status, and turn the outcome into a state and the text to show for it.
 
-import { prepare_watch } from './import-watch.js'
+import { last_open_failure, prepare_watch } from './import-watch.js'
 import { import_url, test_connection } from './node-api.js'
-import { clear_token, load_settings, record_status } from './settings.js'
+import { clear_token, load_settings, record_import, record_status } from './settings.js'
 
 export const is_importable = (url) => {
   try {
@@ -62,7 +62,17 @@ export const run_import = async (url) => {
     watcher?.cancel()
     return { outcome: result.kind === 'ok' ? { state: 'started', text: 'Import started.' } : describe_failure(result), completion: null }
   }
-  const completion = watcher === null ? null : watcher.watch(result.data.import_id)
+  const import_id = result.data.import_id
+  const completion = watcher === null ? null : watcher.watch(import_id)
+  await record_import({
+    import_id,
+    host: new URL(url).host,
+    started_at: new Date().toISOString(),
+    watching: completion !== null,
+    ...(completion === null ? { socket_failure: last_open_failure ?? 'unknown' } : {}),
+    result: null
+  })
+  completion?.then((outcome) => record_import({ import_id, result: describe_completion(outcome) }))
   const text = completion === null
     ? 'Import started. The track appears in Record when ingest finishes.'
     : 'Import started. A notification reports the result.'

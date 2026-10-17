@@ -16,11 +16,17 @@ chrome.runtime.onInstalled.addListener(register_menu)
 chrome.runtime.onStartup.addListener(register_menu)
 
 const notify = ({ title, message }) => {
-  chrome.notifications.create({ type: 'basic', iconUrl: 'icons/128.png', title, message })
+  chrome.notifications.create({ type: 'basic', iconUrl: 'icons/128.png', title, message }, () => {
+    if (chrome.runtime.lastError) console.warn(`record: notification refused: ${chrome.runtime.lastError.message}`)
+  })
 }
 
 const report_completion = (completion) => {
-  completion?.then((result) => notify(describe_completion(result)))
+  completion?.then((result) => {
+    const text = describe_completion(result)
+    console.info(`record: import finished, ${text.title}`)
+    notify(text)
+  })
 }
 
 chrome.contextMenus.onClicked.addListener(async (info) => {
