@@ -12,7 +12,7 @@ The manifest's `key` pins the extension id to `jnngkjciciffonficmbbbapcbkdooplc`
 
 ## Development
 
-No build step and no dependencies. `npm test` runs the tests on Node 22, and `npm run package` zips `extension/` for a store upload.
+No build step and no dependencies. `npm test` runs the tests on Node 22, and `npm run package` zips `extension/` for a store upload. Branded Chrome ignores `--load-extension` (since 137), so an in-browser check means Load unpacked by hand, or Chrome for Testing.
 
 ## License
 
