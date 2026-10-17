@@ -1,7 +1,7 @@
 {
   "name": "record-chrome-extension",
   "description": "Chrome extension that imports the current page or a link into a Record node.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",

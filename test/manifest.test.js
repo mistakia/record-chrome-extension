@@ -14,7 +14,7 @@ test('the manifest is Manifest V3 on Chrome 88 or later', () => {
 })
 
 test('the manifest declares exactly the §9.3 permissions', () => {
-  assert.deepEqual([...manifest.permissions].sort(), ['activeTab', 'contextMenus', 'notifications', 'storage'])
+  assert.deepEqual([...manifest.permissions].sort(), ['activeTab', 'contextMenus', 'storage'])
   assert.equal(manifest.host_permissions, undefined)
   assert.equal(manifest.optional_permissions, undefined)
   assert.equal(manifest.optional_host_permissions, undefined)

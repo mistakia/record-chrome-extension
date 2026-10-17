@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Record",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Import audio from any page into your Record node.",
   "minimum_chrome_version": "88",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxOd54IvMv7XSqVt50TVsVJ8gbuCsACe1ARYVqcmmEkgQx0p3z1j/08gyeYlAljqkbOTgASQy2JytbYapNW3GSKN+bAKIkN/RjBGwK1rIiLL2uIhu/FT75eUCV7mq8S2OrTYwhfjKHTD+2Xs3nEeGKOTNXy+nZgyhTTROzGBnxTiZ04nBnsWPuAbeMnBJh/rHNTrfz1cmG717z3sdvobYYdgGw7O/hb7/UdaP4o+OXWGJ6rtHgNKqwLIen13iwAxMJKUFal7KdR0inkarLIXgLOKASTkKcdzX36pHBTC7y9Be5mEpskEzv5D5W2gA2rXDGpBqBvaLmuyU/qiH8jt43wIDAQAB",
@@ -26,7 +26,6 @@
   "permissions": [
     "activeTab",
     "storage",
-    "contextMenus",
-    "notifications"
+    "contextMenus"
   ]
 }

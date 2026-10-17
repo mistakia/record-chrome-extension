@@ -57,21 +57,6 @@ const show_last_status = (last_status) => {
     : { state: 'error', text: `${describe_failure({ kind: last_status.kind }).text} ${when}` })
 }
 
-const show_last_import = (last_import) => {
-  if (!last_import) {
-    show($('last_import'), { state: '', text: 'None yet.' })
-    return
-  }
-  const started = new Date(last_import.started_at).toLocaleString()
-  if (last_import.result) {
-    show($('last_import'), { state: last_import.result.ok ? 'ok' : 'error', text: `${last_import.host}, ${started}: ${last_import.result.title.replace(/^Record: /, '')}. ${last_import.result.message}` })
-  } else if (!last_import.watching) {
-    show($('last_import'), { state: 'warning', text: `${last_import.host}, ${started}: started, result not followed (${last_import.socket_failure}).` })
-  } else {
-    show($('last_import'), { state: '', text: `${last_import.host}, ${started}: running, or the result was lost when Chrome stopped the worker.` })
-  }
-}
-
 const test = async () => {
   const form = read_form()
   if (!form.ok) {
@@ -118,10 +103,6 @@ const start = async () => {
   token_input.value = settings.token
   fill_libraries([], settings.library_address)
   show_last_status(settings.last_status)
-  show_last_import(settings.last_import)
-  chrome.storage.onChanged.addListener((changes) => {
-    if (changes.last_import) show_last_import(changes.last_import.newValue)
-  })
   warn_cleartext()
   node_url_input.addEventListener('input', warn_cleartext)
   $('test').addEventListener('click', test)
