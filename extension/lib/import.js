@@ -2,6 +2,7 @@
 // settings, POST the URL, clear the token on a 401, record the connection
 // status, and turn the outcome into a state and the text to show for it.
 
+import { prepare_watch } from './import-watch.js'
 import { import_url, test_connection } from './node-api.js'
 import { clear_token, load_settings, record_status } from './settings.js'
 
@@ -36,15 +37,36 @@ const settle = async (result) => {
   }
 }
 
+const track_name = ({ title, artist }) => [title, artist].filter(Boolean).join(' — ') || 'an untitled track'
+
+// The notification text for a finished import (import-watch.js).
+export const describe_completion = (result) => {
+  if (result.lost !== undefined) return { ok: false, title: 'Record: import result unknown', message: `${result.lost}. Check Record for the track.` }
+  if (result.errors.length > 0 && result.tracks.length === 0) return { ok: false, title: 'Record: import failed', message: result.errors[0] }
+  const names = result.tracks.length === 1 ? track_name(result.tracks[0]) : `${result.tracks.length} tracks`
+  const failed = result.errors.length > 0 ? ` ${result.errors.length} failed: ${result.errors[0]}` : ''
+  return { ok: result.errors.length === 0, title: 'Record: imported', message: `${names}.${failed}` }
+}
+
+// Resolves with the outcome to show now, and a completion promise for the
+// import's result when the node's event stream could follow it.
 export const run_import = async (url) => {
-  if (!is_importable(url)) return { state: 'error', text: 'Only http and https pages can be imported.' }
+  if (!is_importable(url)) return { outcome: { state: 'error', text: 'Only http and https pages can be imported.' }, completion: null }
   const { node_url, token, library_address } = await load_settings()
-  if (!library_address) return { state: 'unconfigured', text: 'Choose a library to import into in options.' }
+  if (!library_address) return { outcome: { state: 'unconfigured', text: 'Choose a library to import into in options.' }, completion: null }
+  const watcher = await prepare_watch({ node_url, token })
   const result = await import_url({ node_url, token, url, library_address })
   await settle(result)
   console.info(`record: import ${result.kind}${result.status ? ` ${result.status}` : ''}`)
-  if (result.kind === 'ok') return { state: 'started', text: 'Import started. The track appears in Record when ingest finishes.' }
-  return describe_failure(result)
+  if (result.kind !== 'ok' || typeof result.data?.import_id !== 'string') {
+    watcher?.cancel()
+    return { outcome: result.kind === 'ok' ? { state: 'started', text: 'Import started.' } : describe_failure(result), completion: null }
+  }
+  const completion = watcher === null ? null : watcher.watch(result.data.import_id)
+  const text = completion === null
+    ? 'Import started. The track appears in Record when ingest finishes.'
+    : 'Import started. A notification reports the result.'
+  return { outcome: { state: 'started', text }, completion }
 }
 
 export const check_node = async () => {
