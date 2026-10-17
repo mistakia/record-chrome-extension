@@ -1,0 +1,18 @@
+main {
+  max-width: 520px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+h1 { margin: 0 0 8px; font-weight: normal; }
+
+label { margin-top: 10px; }
+
+.row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+
+.hint { color: var(--color-text-tertiary); margin: 2px 0; }
+
+code { color: var(--color-text-secondary); user-select: all; }

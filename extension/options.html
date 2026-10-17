@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Record options</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <h1 class="label">// record extension</h1>
+
+    <p>The extension sends the URLs you import to this node and to nowhere else. Point it only at a node you trust.</p>
+
+    <label for="node_url" class="label">Node URL</label>
+    <input id="node_url" type="url" spellcheck="false" autocomplete="off">
+    <div id="node_url_warning" class="status" data-state="warning"></div>
+
+    <label for="token" class="label">Access token (blank if the node takes none)</label>
+    <input id="token" type="password" spellcheck="false" autocomplete="off">
+    <p class="hint">The token is kept in this Chrome profile's extension storage, with no other protection. Anyone who can read this Chrome profile can read the token.</p>
+
+    <div class="row">
+      <button id="test">Test connection</button>
+      <span id="test_status" class="status" role="status"></span>
+    </div>
+
+    <label for="library" class="label">Import into</label>
+    <select id="library"></select>
+
+    <div class="row">
+      <button id="save" class="primary">Save</button>
+      <span id="save_status" class="status" role="status"></span>
+    </div>
+
+    <p class="label">Last known connection</p>
+    <p id="last_status" class="status"></p>
+
+    <p class="hint">This extension's origin, for a node's <code>cors_origins</code>: <code id="origin"></code></p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

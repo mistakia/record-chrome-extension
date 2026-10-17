@@ -1,0 +1,66 @@
+/* Paper tokens from record-app's STYLE.md, shared by the popup and options. */
+:root {
+  --color-surface: #f7f7f4;
+  --color-text: #23211d;
+  --color-text-secondary: #6b6661;
+  --color-text-tertiary: #a59e94;
+  --color-border: #d6cfc3;
+  --color-accent: #ff492f;
+  --color-on-accent: #ffffff;
+  --color-error: #c8372d;
+  --color-warning: #b07d0a;
+  --color-success: #2e8a4f;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 12px/1.5 var(--font-mono);
+}
+
+.label {
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+}
+
+button {
+  font: inherit;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+button.primary {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+button:disabled { opacity: 0.5; cursor: default; }
+
+input, select {
+  font: inherit;
+  width: 100%;
+  padding: 5px 6px;
+  border: 1px solid var(--color-border);
+  background: #fbfaf7;
+  color: var(--color-text);
+}
+
+input:focus, select:focus, button:focus-visible { outline: 1px solid var(--color-accent); }
+
+a { color: var(--color-text-secondary); }
+a:hover { color: var(--color-accent); }
+
+.status { min-height: 1.5em; color: var(--color-text-secondary); }
+.status[data-state='started'], .status[data-state='ready'], .status[data-state='ok'] { color: var(--color-success); }
+.status[data-state='error'], .status[data-state='unreachable'], .status[data-state='unauthorized'] { color: var(--color-error); }
+.status[data-state='unconfigured'], .status[data-state='warning'] { color: var(--color-warning); }

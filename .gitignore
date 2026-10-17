@@ -12,3 +12,6 @@ yarn-error.log
 #
 .tmp
 tmp
+
+# Packaged extension
+record-chrome-extension.zip
